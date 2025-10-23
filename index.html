@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Finder India - Discover Your Perfect Brew</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question {
+            margin-bottom: 30px;
+        }
+        
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .option {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background: #4caf50;
+            color: white;
+            border-color: #45a049;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .coffee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .coffee-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .coffee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .coffee-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .coffee-card .type {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .coffee-card .features {
+            color: #888;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .coffee-card .price {
+            color: #f12711;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .coffee-card .buy-btn {
+            background: #ff9900;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .coffee-card .buy-btn:hover {
+            background: #ff7700;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #e0e0e0;
+            margin-bottom: 30px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s;
+        }
+        
+        .filter-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .filter-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tag {
+            padding: 8px 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tag:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .tag.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☕ Coffee Finder India</h1>
+            <p>Discover your perfect coffee from India's finest selection</p>
+        </div>
+        
+        <div class="content">
+            <!-- Questionnaire Section -->
+            <div id="questionnaire" class="section active">
+                <div class="progress-bar">
+                    <div class="progress" id="progress" style="width: 0%"></div>
+                </div>
+                
+                <div id="questions"></div>
+                
+                <button class="btn" onclick="nextQuestion()" id="nextBtn">Next Question</button>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="results" class="section">
+                <h2>Your Perfect Coffee Matches</h2>
+                <p style="margin-top: 10px; color: #666;">Based on your preferences, here are the best coffees available on Amazon India:</p>
+                
+                <div class="filter-section">
+                    <h3>Quick Filters:</h3>
+                    <div class="filter-tags">
+                        <span class="tag" onclick="filterCoffees('all')">All Coffees</span>
+                        <span class="tag" onclick="filterCoffees('arabica')">Arabica</span>
+                        <span class="tag" onclick="filterCoffees('robusta')">Robusta</span>
+                        <span class="tag" onclick="filterCoffees('instant')">Instant</span>
+                        <span class="tag" onclick="filterCoffees('ground')">Ground</span>
+                        <span class="tag" onclick="filterCoffees('beans')">Whole Beans</span>
+                    </div>
+                </div>
+                
+                <div id="coffeeList" class="coffee-grid"></div>
+                
+                <button class="btn" onclick="resetQuiz()" style="margin-top: 30px;">Start Over</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Questionnaire Data
+        const questions = [
+            {
+                id: 'strength',
+                question: 'How strong do you like your coffee?',
+                options: [
+                    { value: 'mild', text: '☕ Mild - Light and smooth' },
+                    { value: 'medium', text: '☕☕ Medium - Balanced flavor' },
+                    { value: 'strong', text: '☕☕☕ Strong - Bold and intense' },
+                    { value: 'extra-strong', text: '☕☕☕☕ Extra Strong - Maximum caffeine kick' }
+                ]
+            },
+            {
+                id: 'roast',
+                question: 'What roast level do you prefer?',
+                options: [
+                    { value: 'light', text: '🌅 Light Roast - Fruity and acidic notes' },
+                    { value: 'medium', text: '☀️ Medium Roast - Balanced and smooth' },
+                    { value: 'dark', text: '🌑 Dark Roast - Bold and smoky' },
+                    { value: 'no-preference', text: '🤷 No preference' }
+                ]
+            },
+            {
+                id: 'type',
+                question: 'How do you usually prepare your coffee?',
+                options: [
+                    { value: 'instant', text: '⚡ Instant Coffee - Quick and convenient' },
+                    { value: 'ground', text: '⏰ Pre-ground - Ready to brew' },
+                    { value: 'beans', text: '🌰 Whole Beans - Freshly ground at home' },
+                    { value: 'pods', text: '💊 Coffee Pods/Capsules' }
+                ]
+            },
+            {
+                id: 'flavor',
+                question: 'What flavor notes do you enjoy?',
+                options: [
+                    { value: 'chocolate', text: '🍫 Chocolate & Cocoa' },
+                    { value: 'nutty', text: '🥜 Nutty & Caramel' },
+                    { value: 'fruity', text: '🍓 Fruity & Floral' },
+                    { value: 'classic', text: '☕ Classic Coffee Flavor' }
+                ]
+            },
+            {
+                id: 'origin',
+                question: 'Do you have a preference for coffee origin?',
+                options: [
+                    { value: 'indian', text: '🇮🇳 Indian Origin (Coorg, Chikmagalur, etc.)' },
+                    { value: 'international', text: '🌍 International Blends' },
+                    { value: 'single-origin', text: '📍 Single Origin Specialty' },
+                    { value: 'no-preference', text: '🤷 No preference' }
+                ]
+            },
+            {
+                id: 'budget',
+                question: 'What\'s your budget per kg/pack?',
+                options: [
+                    { value: 'budget', text: '💰 Under ₹500' },
+                    { value: 'mid', text: '💰💰 ₹500 - ₹1000' },
+                    { value: 'premium', text: '💰💰💰 ₹1000 - ₹2000' },
+                    { value: 'luxury', text: '💰💰💰💰 Above ₹2000' }
+                ]
+            }
+        ];
+        
+        // Coffee Database (50+ coffees available on Amazon India)
+        const coffeeDatabase = [
+            // Premium Indian Brands
+            { name: "Blue Tokai Coffee - Vienna Roast", type: "arabica", form: "beans", strength: "medium", roast: "dark", flavor: "chocolate", price: "₹550", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Blue+Tokai+Vienna+Roast", features: "Premium Indian specialty coffee, chocolate notes" },
+            { name: "Rage Coffee - Instant Coffee", type: "arabica", form: "instant", strength: "strong", roast: "medium", flavor: "classic", price: "₹449", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Rage+Coffee+Instant", features: "Award-winning instant coffee with vitamins" },
+            { name: "Sleepy Owl Coffee - French Roast", type: "arabica", form: "ground", strength: "strong", roast: "dark", flavor: "nutty", price: "₹350", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Sleepy+Owl+French+Roast", features: "100% Arabica, smooth dark roast" },
+            { name: "The Indian Bean - Medium Roast", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "fruity", price: "₹650", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=The+Indian+Bean+Medium", features: "Estate grown, fruity undertones" },
+            { name: "Flying Squirrel - Sunkissed", type: "arabica", form: "beans", strength: "mild", roast: "light", flavor: "fruity", price: "₹800", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Flying+Squirrel+Sunkissed", features: "Single estate, award-winning" },
+            
+            // Coorg & Chikmagalur Specialties
+            { name: "Coorg Coffee Co. - Estate Arabica", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "chocolate", price: "₹750", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Coorg+Coffee+Estate+Arabica", features: "Direct from Coorg estates" },
+            { name: "Panduranga Coffee - Mysore Nuggets", type: "arabica", form: "beans", strength: "strong", roast: "dark", flavor: "nutty", price: "₹1200", origin: "indian", budget: "premium", link: "https://www.amazon.in/s?k=Panduranga+Mysore+Nuggets", features: "Premium grade, exclusive variety" },
+            { name: "Chikmagalur Coffee - Peaberry", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "fruity", price: "₹950", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Chikmagalur+Peaberry+Coffee", features: "Rare peaberry beans, complex flavor" },
+            
+            // International Brands Available in India
+            { name: "Lavazza - Crema e Gusto", type: "blend", form: "ground", strength: "strong", roast: "dark", flavor: "chocolate", price: "₹600", origin: "international", budget: "mid", link: "https://www.amazon.in/s?k=Lavazza+Crema+Gusto", features: "Italian blend, intense flavor" },
+            { name: "Davidoff - Rich Aroma", type: "arabica", form: "instant", strength: "medium", roast: "medium", flavor: "classic", price: "₹750", origin: "international", budget: "mid", link: "https://www.amazon.in/s?k=Davidoff+Rich+Aroma", features: "Swiss quality, smooth taste" },
+            { name: "Starbucks - Pike Place", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "nutty", price: "₹900", origin: "international", budget: "mid", link: "https://www.amazon.in/s?k=Starbucks+Pike+Place", features: "Signature blend, cocoa notes" },
+            { name: "Tim Hortons - Original Blend", type: "arabica", form: "ground", strength: "mild", roast: "light", flavor: "classic", price: "₹550", origin: "international", budget: "mid", link: "https://www.amazon.in/s?k=Tim+Hortons+Original", features: "Canadian favorite, smooth" },
+            
+            // Budget-Friendly Options
+            { name: "Nescafe Classic", type: "blend", form: "instant", strength: "medium", roast: "medium", flavor: "classic", price: "₹340", origin: "international", budget: "budget", link: "https://www.amazon.in/s?k=Nescafe+Classic", features: "India's favorite instant coffee" },
+            { name: "Bru Gold", type: "blend", form: "instant", strength: "medium", roast: "medium", flavor: "classic", price: "₹280", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Bru+Gold+Coffee", features: "Popular Indian brand" },
+            { name: "Continental Coffee - Xtra", type: "blend", form: "instant", strength: "strong", roast: "dark", flavor: "classic", price: "₹299", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Continental+Coffee+Xtra", features: "South Indian strong coffee" },
+            { name: "Tata Coffee Grand", type: "blend", form: "instant", strength: "medium", roast: "medium", flavor: "classic", price: "₹250", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Tata+Coffee+Grand", features: "Trusted Indian brand" },
+            
+            // Specialty & Single Origin
+            { name: "Araku Coffee - Organic", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "fruity", price: "₹1500", origin: "indian", budget: "premium", link: "https://www.amazon.in/s?k=Araku+Organic+Coffee", features: "Tribal organic coffee, award-winning" },
+            { name: "Kerehaklu Estate Coffee", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "chocolate", price: "₹1100", origin: "indian", budget: "premium", link: "https://www.amazon.in/s?k=Kerehaklu+Estate+Coffee", features: "Single estate Chikmagalur coffee" },
+            { name: "Koinonia Coffee - Attikan Estate", type: "arabica", form: "beans", strength: "mild", roast: "light", flavor: "fruity", price: "₹900", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Koinonia+Attikan+Coffee", features: "Biodynamic farming, unique profile" },
+            { name: "Seven Beans Coffee - Urja", type: "arabica", form: "beans", strength: "strong", roast: "dark", flavor: "chocolate", price: "₹750", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Seven+Beans+Urja", features: "High caffeine content" },
+            
+            // Filter Coffee Specialists
+            { name: "Cothas Coffee - Filter Blend", type: "blend", form: "ground", strength: "strong", roast: "dark", flavor: "classic", price: "₹450", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Cothas+Filter+Coffee", features: "Traditional South Indian filter coffee" },
+            { name: "Leo Coffee - Filter Coffee", type: "blend", form: "ground", strength: "strong", roast: "dark", flavor: "classic", price: "₹380", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Leo+Filter+Coffee", features: "Coorg's famous filter coffee" },
+            { name: "Narasu's Coffee", type: "blend", form: "ground", strength: "strong", roast: "dark", flavor: "classic", price: "₹320", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Narasus+Coffee", features: "Tamil Nadu's favorite" },
+            
+            // Robusta Options
+            { name: "Country Bean - Kaapi Nirvana", type: "robusta", form: "beans", strength: "extra-strong", roast: "dark", flavor: "nutty", price: "₹650", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Country+Bean+Kaapi+Nirvana", features: "100% Indian Robusta" },
+            { name: "Pristine Deccan - Robusta", type: "robusta", form: "ground", strength: "strong", roast: "dark", flavor: "chocolate", price: "₹480", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Pristine+Deccan+Robusta", features: "Organic Robusta" },
+            { name: "Levista - Strong", type: "robusta", form: "instant", strength: "extra-strong", roast: "dark", flavor: "classic", price: "₹350", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Levista+Strong+Coffee", features: "Extra strong instant" },
+            
+            // Flavored Coffees
+            { name: "Bayar's Coffee - Vanilla", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "nutty", price: "₹550", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Bayars+Vanilla+Coffee", features: "Natural vanilla flavoring" },
+            { name: "Coffee Day - Hazelnut", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "nutty", price: "₹480", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Coffee+Day+Hazelnut", features: "Cafe Coffee Day's retail brand" },
+            { name: "Continental Coffee - Moccacino", type: "blend", form: "instant", strength: "mild", roast: "medium", flavor: "chocolate", price: "₹320", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Continental+Moccacino", features: "Coffee with cocoa" },
+            
+            // Cold Brew & Specialty
+            { name: "Sleepy Owl - Cold Brew Bags", type: "arabica", form: "ground", strength: "strong", roast: "medium", flavor: "chocolate", price: "₹450", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Sleepy+Owl+Cold+Brew", features: "Ready-to-brew cold coffee bags" },
+            { name: "Blue Tokai - Cold Brew Blend", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "fruity", price: "₹650", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Blue+Tokai+Cold+Brew", features: "Specifically for cold brewing" },
+            { name: "Rage Coffee - Cold Brew", type: "arabica", form: "instant", strength: "strong", roast: "medium", flavor: "chocolate", price: "₹399", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Rage+Cold+Brew+Coffee", features: "Instant cold coffee" },
+            
+            // Organic Options
+            { name: "Organic India - Tulsi Coffee", type: "arabica", form: "ground", strength: "mild", roast: "medium", flavor: "classic", price: "₹380", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Organic+India+Tulsi+Coffee", features: "Coffee with holy basil" },
+            { name: "Pristine Organics - Arabica", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "fruity", price: "₹750", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Pristine+Organics+Coffee", features: "Certified organic" },
+            { name: "24 Mantra Organic Coffee", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "classic", price: "₹420", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=24+Mantra+Organic+Coffee", features: "Organic and fair trade" },
+            
+            // Premium International
+            { name: "illy - Classico", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "chocolate", price: "₹1800", origin: "international", budget: "premium", link: "https://www.amazon.in/s?k=illy+Classico+Coffee", features: "Premium Italian coffee" },
+            { name: "Segafredo - Intermezzo", type: "arabica", form: "beans", strength: "strong", roast: "dark", flavor: "nutty", price: "₹1200", origin: "international", budget: "premium", link: "https://www.amazon.in/s?k=Segafredo+Intermezzo", features: "Italian espresso beans" },
+            { name: "Death Wish Coffee", type: "blend", form: "ground", strength: "extra-strong", roast: "dark", flavor: "chocolate", price: "₹2500", origin: "international", budget: "luxury", link: "https://www.amazon.in/s?k=Death+Wish+Coffee", features: "World's strongest coffee" },
+            { name: "Jamaica Blue Mountain", type: "arabica", form: "beans", strength: "mild", roast: "medium", flavor: "fruity", price: "₹4500", origin: "international", budget: "luxury", link: "https://www.amazon.in/s?k=Jamaica+Blue+Mountain+Coffee", features: "Ultra-premium, rare coffee" },
+            
+            // More Indian Artisanal
+            { name: "Bloom Coffee Roasters", type: "arabica", form: "beans", strength: "medium", roast: "light", flavor: "fruity", price: "₹850", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Bloom+Coffee+Roasters", features: "Specialty third wave coffee" },
+            { name: "KC Roasters - Monsoon Malabar", type: "arabica", form: "beans", strength: "mild", roast: "light", flavor: "nutty", price: "₹1100", origin: "indian", budget: "premium", link: "https://www.amazon.in/s?k=Monsoon+Malabar+Coffee", features: "Unique monsooned process" },
+            { name: "Coroco Coffee - Baba Budangiri", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "chocolate", price: "₹950", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Baba+Budangiri+Coffee", features: "From birthplace of Indian coffee" },
+            { name: "Third Wave Coffee - House Blend", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "nutty", price: "₹780", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Third+Wave+Coffee+Roasters", features: "Popular cafe's retail brand" },
+            
+            // Pods & Capsules
+            { name: "Nespresso Compatible - Bonhomia", type: "arabica", form: "pods", strength: "medium", roast: "medium", flavor: "classic", price: "₹400", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Bonhomia+Coffee+Pods", features: "Indian brand Nespresso pods" },
+            { name: "Country Bean - Coffee Capsules", type: "arabica", form: "pods", strength: "strong", roast: "dark", flavor: "chocolate", price: "₹450", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Country+Bean+Capsules", features: "Compatible with machines" },
+            
+            // Additional varieties
+            { name: "Tata Coffee - Sonnets", type: "arabica", form: "instant", strength: "mild", roast: "light", flavor: "fruity", price: "₹380", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Tata+Sonnets+Coffee", features: "Freeze-dried instant coffee" },
+            { name: "Girijan Coffee", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "classic", price: "₹320", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Girijan+Coffee", features: "Tribal cooperative coffee" },
+            { name: "Fresh & Honest - Arabica", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "nutty", price: "₹680", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Fresh+Honest+Coffee", features: "Direct from farmers" },
+            { name: "Devan's Coffee", type: "blend", form: "ground", strength: "strong", roast: "dark", flavor: "classic", price: "₹420", origin: "indian", budget: "budget", link: "https://www.amazon.in/s?k=Devans+Coffee", features: "Traditional South Indian" },
+            { name: "Savorworks - Roasted Coffee", type: "arabica", form: "beans", strength: "medium", roast: "medium", flavor: "chocolate", price: "₹720", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Savorworks+Coffee", features: "Small batch roasted" },
+            { name: "Something's Brewing", type: "arabica", form: "ground", strength: "medium", roast: "medium", flavor: "fruity", price: "₹580", origin: "indian", budget: "mid", link: "https://www.amazon.in/s?k=Somethings+Brewing+Coffee", features: "Artisanal coffee brand" }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = {};
+        
+        function init() {
+            displayQuestion();
+        }
+        
+        function displayQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+            
+            const q = questions[currentQuestion];
+            const container = document.getElementById('questions');
+            
+            container.innerHTML = `
+                <div class="question">
+                    <h3>${currentQuestion + 1}. ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map(opt => `
+                            <div class="option" onclick="selectOption('${q.id}', '${opt.value}', this)">
+                                ${opt.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Update progress bar
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Update button text
+            const btn = document.getElementById('nextBtn');
+            if (currentQuestion === questions.length - 1) {
+                btn.textContent = 'Get My Coffee Recommendations';
+            }
+        }
+        
+        function selectOption(questionId, value, element) {
+            // Remove previous selection
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selection
+            element.classList.add('selected');
+            
+            // Store answer
+            answers[questionId] = value;
+        }
+        
+        function nextQuestion() {
+            if (!answers[questions[currentQuestion].id]) {
+                alert('Please select an option before proceeding');
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+        
+        function showResults() {
+            document.getElementById('questionnaire').classList.remove('active');
+            document.getElementById('results').classList.add('active');
+            
+            // Filter and rank coffees based on answers
+            let filteredCoffees = [...coffeeDatabase];
+            
+            // Apply filters based on preferences
+            filteredCoffees = filteredCoffees.filter(coffee => {
+                let score = 0;
+                let matches = 0;
+                
+                // Check strength match
+                if (answers.strength === coffee.strength) {
+                    score += 3;
+                    matches++;
+                }
+                
+                // Check roast match
+                if (answers.roast === coffee.roast || answers.roast === 'no-preference') {
+                    score += 2;
+                    matches++;
+                }
+                
+                // Check type/form match
+                if (answers.type === coffee.form) {
+                    score += 3;
+                    matches++;
+                }
+                
+                // Check flavor match
+                if (answers.flavor === coffee.flavor) {
+                    score += 2;
+                    matches++;
+                }
+                
+                // Check origin match
+                if (answers.origin === coffee.origin || answers.origin === 'no-preference') {
+                    score += 1;
+                    matches++;
+                }
+                
+                // Check budget match
+                if (answers.budget === coffee.budget || 
+                    (answers.budget === 'luxury' && (coffee.budget === 'premium' || coffee.budget === 'luxury')) ||
+                    (answers.budget === 'premium' && coffee.budget !== 'luxury')) {
+                    score += 2;
+                    matches++;
+                }
+                
+                coffee.matchScore = score;
+                coffee.matchCount = matches;
+                
+                return matches >= 3; // Show coffees that match at least 3 criteria
+            });
+            
+            // Sort by match score
+            filteredCoffees.sort((a, b) => b.matchScore - a.matchScore);
+            
+            // Display top matches (limit to 20 for better UX)
+            displayCoffees(filteredCoffees.slice(0, 20));
+        }
+        
+        function displayCoffees(coffees) {
+            const container = document.getElementById('coffeeList');
+            
+            if (coffees.length === 0) {
+                container.innerHTML = '<p>No exact matches found. Showing all coffees...</p>';
+                displayCoffees(coffeeDatabase.slice(0, 20));
+                return;
+            }
+            
+            container.innerHTML = coffees.map(coffee => `
+                <div class="coffee-card">
+                    <h4>${coffee.name}</h4>
+                    <div class="type">Type: ${coffee.type.charAt(0).toUpperCase() + coffee.type.slice(1)} | ${coffee.form.charAt(0).toUpperCase() + coffee.form.slice(1)}</div>
+                    <div class="features">${coffee.features}</div>
+                    <div class="price">${coffee.price}</div>
+                    <a href="${coffee.link}" target="_blank" class="buy-btn">View on Amazon India →</a>
+                </div>
+            `).join('');
+        }
+        
+        function filterCoffees(type) {
+            // Update active tag
+            document.querySelectorAll('.tag').forEach(tag => tag.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let filtered = [...coffeeDatabase];
+            
+            if (type !== 'all') {
+                filtered = coffeeDatabase.filter(coffee => 
+                    coffee.type === type || coffee.form === type
+                );
+            }
+            
+            displayCoffees(filtered.slice(0, 20));
+        }
+        
+        function resetQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('questionnaire').classList.add('active');
+            init();
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
